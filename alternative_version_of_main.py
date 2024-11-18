@@ -23,5 +23,5 @@ def analyze_total(data, year):
     return "\n".join(result)
 
 
-data = read_data("Olympic Athletes - athlete_events.tsv")
+data = read_data("data.tsv")
 print(analyze_total(data, 2000))
