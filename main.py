@@ -19,6 +19,10 @@ medals_parser.add_argument("-output", type=str, help="Optional file to save the 
 total_parser = subparsers.add_parser("total", help="Analyze medals during a whole year for all countries")
 total_parser.add_argument("year", type=int, help="Year of Olympic games")
 
+# Create a sub-parser for the '-overall' command
+total_parser = subparsers.add_parser("overall", help="Analyzing best year Olympic for each country that you have entered")
+total_parser.add_argument("countries", type=int, nargs="+", help="Countries to analyse.")
+
 # Parse the command-line arguments
 args = parser.parse_args()
 
@@ -83,7 +87,6 @@ def medals_command(data,country,year,output_file = "",):
                 file.write(f"{country} - {medals['Gold']} - {medals['Silver']} - {medals['Bronze']}\n")
     return ten_athlete_medalist,country_medals
 
-
 def total_command(data, year):
     country_medals = {}
     for row in data:
@@ -97,11 +100,13 @@ def total_command(data, year):
         result.append(f"{country} - Gold: {medals['Gold']} - Silver: {medals['Silver']} - Bronze: {medals['Bronze']}")
     return "\n".join(result)
 
+def overall_command(countries):
+    pass
 
 if args.command == "medals":
     medals_command(read_data(args.data_file),args.country,args.year,args.output)
 elif args.command == "total":
     print(total_command(read_data(args.data_file),args.year))
-
-
+elif args.command == "overall":
+    print(overall_command(args.countries))
 
