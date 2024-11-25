@@ -21,7 +21,7 @@ total_parser.add_argument("year", type=int, help="Year of Olympic games")
 
 # Create a sub-parser for the '-overall' command
 total_parser = subparsers.add_parser("overall", help="Analyzing best year Olympic for each country that you have entered")
-total_parser.add_argument("countries", type=int, nargs="+", help="Countries to analyse.")
+total_parser.add_argument("countries", type=str, nargs="+", help="Countries to analyse.")
 
 # Parse the command-line arguments
 args = parser.parse_args()
@@ -80,7 +80,7 @@ def medals_command(data,country,year,output_file = "",):
     elif output_file == "":
         pass
     else:
-        with open(output_file,"w") as file:
+        with open(output_file,"w") as file: # Writing into file all information from function
             for name, sport_medal in ten_athlete_medalist.items():
                 file.write(f"{name} - {sport_medal[0]} - {sport_medal[1]}\n")
             for country, medals in sorted(country_medals.items()):
@@ -100,13 +100,24 @@ def total_command(data, year):
         result.append(f"{country} - Gold: {medals['Gold']} - Silver: {medals['Silver']} - Bronze: {medals['Bronze']}")
     return "\n".join(result)
 
-def overall_command(countries):
-    pass
+def overall_command(data,countries):
+    for country in countries:
+        country_years = {}
+        for row in data:
+            if (row["Team"].lower() == country.lower() or row["NOC"].lower() == country.lower()) and (row['Medal'] != 'NA'): # Adding keys as years and medals as value to country_years.
+                if row["Year"] not in country_years:
+                    country_years[row["Year"]] =  0
+                country_years[row["Year"]] += 1
+        if len(country_years) == 0 : # Validation for incorrect country
+            print(f"Sorry. There is no {country} as a country in dataset")
+        else:
+            max_key, max_value = max(country_years.items(), key=lambda x: x[1]) # Finding max values with its key and printing it
+            print(f"{country} had its best Olympics in {max_key} with {max_value} medals.")
 
 if args.command == "medals":
     medals_command(read_data(args.data_file),args.country,args.year,args.output)
 elif args.command == "total":
     print(total_command(read_data(args.data_file),args.year))
 elif args.command == "overall":
-    print(overall_command(args.countries))
+    overall_command(read_data(args.data_file),args.countries)
 
