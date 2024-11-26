@@ -155,6 +155,7 @@ def interactive_mode(data):
         print(f"Average Gold medals: {avg_gold:.2f}, Silver: {avg_silver:.2f}, Bronze: {avg_bronze:.2f}")
         print("-" * 50)
 
+
 def main():
     # Create the main parser
     parser = argparse.ArgumentParser(description="Analysis of medals according to the Olympic Games.")
