@@ -1,6 +1,7 @@
 import argparse
 import csv
 
+
 def read_data(file_path):
     """Читання даних із файлу."""
     try:
@@ -15,6 +16,7 @@ def read_data(file_path):
         print(f"Помилка читання файлу: {e}")
         exit()
 
+
 def validate_year(data, year):
     """Перевірка, чи існує рік в даних."""
     if not any(int(row["Year"]) == year for row in data):
@@ -22,12 +24,14 @@ def validate_year(data, year):
         return False
     return True
 
+
 def validate_country(data, country):
     """Перевірка, чи існує країна в даних."""
     if not any(row["Team"].lower() == country.lower() or row["NOC"].lower() == country.lower() for row in data):
         print(f"Помилка: країна '{country}' відсутня у даних. Спробуйте іншу країну.")
         return False
     return True
+
 
 def medals_command(data, country, year, output_file=None):
     """Аналіз медалей для заданої країни та року."""
@@ -38,7 +42,9 @@ def medals_command(data, country, year, output_file=None):
     country_medals = {"Gold": 0, "Silver": 0, "Bronze": 0}
 
     for row in data:
-        if int(row["Year"]) == year and (row["Team"].lower() == country.lower() or row["NOC"].lower() == country.lower()) and row["Medal"] != 'NA':
+        if int(row["Year"]) == year and (
+                row["Team"].lower() == country.lower() or row["NOC"].lower() == country.lower()) and row[
+            "Medal"] != 'NA':
             if row["Name"] not in medalists:
                 medalists[row["Name"]] = (row["Sport"], row["Medal"])
             country_medals[row["Medal"]] += 1
@@ -70,6 +76,7 @@ def medals_command(data, country, year, output_file=None):
         except Exception as e:
             print(f"Помилка запису у файл: {e}")
 
+
 def total_command(data, year):
     """Аналіз медалей для всіх країн у заданому році."""
     if not validate_year(data, year):
@@ -88,6 +95,7 @@ def total_command(data, year):
     for country, medals in sorted(country_medals.items()):
         print(f"{country} - Gold: {medals['Gold']}, Silver: {medals['Silver']}, Bronze: {medals['Bronze']}")
 
+
 def overall_command(data, countries):
     """Найуспішніший рік для кожної країни."""
     for country in countries:
@@ -97,7 +105,8 @@ def overall_command(data, countries):
         year_medals = {}
 
         for row in data:
-            if (row["Team"].lower() == country.lower() or row["NOC"].lower() == country.lower()) and row["Medal"] != 'NA':
+            if (row["Team"].lower() == country.lower() or row["NOC"].lower() == country.lower()) and row[
+                "Medal"] != 'NA':
                 year = int(row["Year"])
                 if year not in year_medals:
                     year_medals[year] = 0
@@ -106,6 +115,7 @@ def overall_command(data, countries):
         if year_medals:
             best_year = max(year_medals, key=year_medals.get)
             print(f"{country}: найуспішніший рік - {best_year} ({year_medals[best_year]} медалей).")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Аналіз даних Олімпійських ігор.")
